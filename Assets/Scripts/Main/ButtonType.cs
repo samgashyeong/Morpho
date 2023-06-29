@@ -6,5 +6,7 @@ public enum ButtonType
 {
     New,
     Continue,
-    Quit
+    Quit,
+    Setting,
+    Liking
 }
