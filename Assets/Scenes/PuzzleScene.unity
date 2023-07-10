@@ -215,10 +215,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   camera: {fileID: 1504706304}
-  puzzleElement: {fileID: 5404111602727577004, guid: 15a8b78036e3b174bb70a69f42da2b67, type: 3}
   parent: {fileID: 862305832}
   clickElement: {fileID: 0}
   defaultPosition: {x: 0, y: 0}
+  element2x1: {fileID: 8239657226268943615, guid: 87b4a753d945f674bb9ba356f56fd3bf, type: 3}
+  element3x1: {fileID: 7107178156804781435, guid: 0717ef970ec802040b97418a49eef4f6, type: 3}
+  element1x2: {fileID: 4567851242671678038, guid: 97f9dd9f4c18c2f488b4f6c21b094fbe, type: 3}
+  element1x3: {fileID: 8802508068734479325, guid: 41cf41662e7282e4e94eae691afbcd8f, type: 3}
 --- !u!1 &1090865442
 GameObject:
   m_ObjectHideFlags: 0
