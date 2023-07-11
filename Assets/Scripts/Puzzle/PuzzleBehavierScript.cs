@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UIElements;
 
 public class PuzzleBehavierScript : MonoBehaviour
 {
@@ -21,17 +22,14 @@ public class PuzzleBehavierScript : MonoBehaviour
     public GameObject element1x3;
 
 
-    private int[,] puzzle = new int[6, 6]
-    { { 0, 0, 0, 3, 0, 0 },
-      { 2, 2, 2, 3, 4, 0 },
-      { 4, 1, 1, 0, 4, 3 },
-      { 4, 0, 0, 0, 4, 3 },
-      { 4, 0, 0, 0, 1, 1 },
-      { 0, 0, 1, 1, 0, 0 }, };
+    public int[,] puzzle = new int[6, 6]
+    { { 0, 3, 0, 1, 1, 0 },
+      { 0, 3, 0, 0, 0, 0 },
+      { 1, 1, 0, 2, 2, 2 },
+      { 0, 0, 0, 0, 1, 1 },
+      { 2, 2, 2, 0, 1, 1 },
+      { 1, 1, 0, 0, 1, 1 }, };
 
-    public PuzzleBehavierScript()
-    {
-    }
 
     void Start()
     {
@@ -97,7 +95,7 @@ public class PuzzleBehavierScript : MonoBehaviour
     {
         if (j > 0)
         {
-            return j - (j + (j-2));
+            return j - (j + (j - 2));
         }
         else
         {
@@ -105,7 +103,25 @@ public class PuzzleBehavierScript : MonoBehaviour
         }
     }
 
-
+    private int returnArrayPostionY(float j)
+    {
+        if (j < 1)
+        {
+            Debug.Log((int)Math.Ceiling((-1 * j) + 2));
+            return (int)Math.Ceiling((-1 * j) + 2);
+        }
+        else if (j == 1){
+            return 1;
+        }
+        else if (j == 2)
+        {
+            return 0;
+        }
+        else
+        {
+            return -1;
+        }
+    }
     // Update is called once per frame
     void Update()
     {
@@ -170,28 +186,149 @@ public class PuzzleBehavierScript : MonoBehaviour
     {
         float elapsedTime = 0.0f;
         float lerpTime = 0.2f;
+        var destX = -1;
+        var x = clickElement.GetComponent<BoxCollider>().transform.parent.transform.position.x;
+        var y = clickElement.GetComponent<BoxCollider>().transform.parent.transform.position.y;
         Vector2 velo = new Vector2(0, clickElement.transform.position.y);
-        if(isMaxX && isPositiveNum && !isMove)
+        if (isMaxX && !isMove)
         {
+            if (isPositiveNum)
+            {
+                if (clickElement.gameObject.name == "2x1")
+                {
+                    destX = 1;
+                    Debug.Log("위치 x y " + x + ' ' + y);
+                    Debug.Log("배열 위치 x y" + (x + 3) + ' ' + returnArrayPostionY(y));
+                    int arrX = (int)(x + 4);
+                    int arrY = returnArrayPostionY(y);
+                    puzzle[arrY, arrX] = 0; puzzle[arrY, arrX - 1] = 0;
+                    for (int i = arrX + 1; i < 6; i++)
+                    {
+                        if (puzzle[arrY, i] != 0)
+                        {
+                            destX = i - 5;
+                            puzzle[arrY, i - 1] = 1; puzzle[arrY, i - 2] = 1;
+                            break;
+                        }
+                        else if(i == 5){
+                            puzzle[arrY, i] = 1; puzzle[arrY, i - 1] = 1;
+                        }
+                    }
+
+                    puzzleDebug();
+                    Debug.Log("destX =  " + destX);
+
+                }
+                else if(clickElement.gameObject.name == "3x1")
+                {
+                    destX = 0;
+                    Debug.Log("위치 x y " + x + ' ' + y);
+                    Debug.Log("배열 위치 x y" + (x + 3) + ' ' + returnArrayPostionY(y));
+                    int arrX = (int)(x + 5);
+                    int arrY = returnArrayPostionY(y);
+                    Debug.Log("arrY = " + arrY);
+                    puzzle[arrY, arrX] = 0; puzzle[arrY, arrX - 1] = 0; puzzle[arrY, arrX - 2] = 0;
+                    for (int i = arrX + 1; i < 6; i++)
+                    {
+                        if (puzzle[arrY, i] != 0)
+                        {
+                            destX = i - 6;
+                            Debug.Log("3x1 퍼즐이동");
+                            puzzle[arrY, i-1] = 2; puzzle[arrY, i - 2] = 2; puzzle[arrY, i - 3] = 2;
+                            break;
+                        }
+                        else if (i == 5)
+                        {
+                            puzzle[arrY, i] = 2; puzzle[arrY, i - 1] = 2; puzzle[arrY, i - 2] = 2;
+                        }
+                    }
+                    puzzleDebug();
+                    Debug.Log("destX =  " + destX);
+                }
+            }
+            else
+            {
+                destX = -3;
+                if (clickElement.gameObject.name == "2x1")
+                {
+                    Debug.Log("위치 x y " + x + ' ' + y);
+                    Debug.Log("배열 위치 x y" + (x) + ' ' + returnArrayPostionY(y));
+                    int arrX = (int)(x+3);
+                    int arrY = returnArrayPostionY(y);
+                    puzzle[arrY, arrX] = 0; puzzle[arrY, arrX+1] = 0;
+                    for (int i = arrX - 1; i >= 0; i--)
+                    {
+                        if (puzzle[arrY, i] != 0)
+                        {
+                            Debug.Log("i =  " + i);
+                            destX = i - 2;
+                            puzzle[arrY, i + 1] = 1; puzzle[arrY, i + 2] = 1;
+                            break;
+                        }
+                        else if (i == 0)
+                        {
+                            puzzle[arrY, i] = 1; puzzle[arrY, i + 1] = 1;
+                        }
+                    }
+
+                    puzzleDebug();
+                    Debug.Log("destX =  " + destX);
+
+                }
+                else if (clickElement.gameObject.name == "3x1")
+                {
+                    destX = -3;
+                    Debug.Log("위치 x y " + x + ' ' + y);
+                    Debug.Log("배열 위치 x y" + (x+3) + ' ' + returnArrayPostionY(y));
+                    int arrX = (int)(x + 3);
+                    int arrY = returnArrayPostionY(y);
+                    puzzle[arrY, arrX] = 0; puzzle[arrY, arrX + 1] = 0; puzzle[arrY, arrX + 2] = 0;
+                    for (int i = arrX - 1; i >= 0; i--)
+                    {
+                        if (puzzle[arrY, i] != 0)
+                        {
+                            Debug.Log("i =  " + i);
+                            destX = i - 2;
+                            puzzle[arrY, i + 1] = 2; puzzle[arrY, i + 2] = 2; puzzle[arrY, i + 3] = 2;
+                            break;
+                        }
+                        else if (i == 0)
+                        {
+                            puzzle[arrY, i] = 2; puzzle[arrY, i + 1] = 2; puzzle[arrY, i + 2] = 2;
+                        }
+                    }
+                    puzzleDebug();
+                    Debug.Log("destX =  " + destX);
+                }
+            }
             while (elapsedTime < lerpTime)
             {
                 yield return null;
                 elapsedTime += Time.deltaTime;
-                isMove=true;
-                clickElement.transform.position = Vector3.Lerp(clickElement.transform.position, new Vector2(5, clickElement.transform.position.y), elapsedTime/lerpTime);
+                isMove = true;
+                clickElement.transform.parent.transform.position = Vector3.Lerp(clickElement.transform.parent.position, new Vector2(destX, clickElement.transform.parent.position.y), elapsedTime / lerpTime);
             }
         }
-        else if(isMaxX && !isPositiveNum && !isMove)
+        else if (isMaxX && !isPositiveNum && !isMove)
         {
 
         }
-        else if(!isMaxX && isPositiveNum && !isMove)
+        else if (!isMaxX && isPositiveNum && !isMove)
         {
 
         }
         else
         {
 
+        }
+    }
+
+    private void puzzleDebug()
+    {
+        for(int i = 0; i < 6; ++i)
+        {
+            Debug.Log(puzzle[i, 0] + ", " + puzzle[i, 1] + ", " + puzzle[i, 2] + ", " + puzzle[i, 3] + ", " + puzzle[i, 4] + ", " + puzzle[i, 5] + ", " + "\n");
+            
         }
     }
 
